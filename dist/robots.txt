@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://guara-tickets-amarelo.andrezon02.chatgpt.site/sitemap.xml
+Sitemap: https://guara-tickets.vercel.app/sitemap.xml

@@ -25,8 +25,14 @@ Site institucional com páginas sobre vale-alimentação e vale-refeição, simu
 
 Rode `python -m http.server 8000 --directory dist` na raiz do repositório e abra [localhost:8000](http://localhost:8000).
 
+## Como reconstruir
+
+Depois de editar qualquer arquivo em `src/` ou `scripts/build-pages.py`, rode `python scripts/build-pages.py` e em seguida `python scripts/validate-pages.py` (o validador precisa de `pip install lxml`).
+
 ## Organização
 
-- `src/home.html` contém o HTML de origem.
+- `src/home.html` contém o HTML da página inicial, do cabeçalho e do rodapé.
+- `src/site.css` é a folha de estilo única; `src/simulador.js` e `src/navegacao.js` são os scripts.
 - `scripts/` reúne o manifesto de páginas, o gerador e o validador.
 - `dist/` contém as páginas e os recursos prontos para servir.
+- `vercel.json` define a barra final nas URLs, o cache dos recursos e os cabeçalhos de segurança.

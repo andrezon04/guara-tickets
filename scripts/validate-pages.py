@@ -5,13 +5,13 @@ from urllib.parse import urlsplit,unquote
 from lxml import html,etree
 import json
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'dist'
-manifest=json.loads((ROOT/'scripts/pages-manifest.json').read_text());base=manifest['origin']
+manifest=json.loads((ROOT/'scripts/pages-manifest.json').read_text(encoding='utf-8'));base=manifest['origin']
 errors=[];titles=set();descriptions=set();docs={}
 def target_file(path):
  p=OUT/unquote(path).lstrip('/')
  return p/'index.html' if path.endswith('/') else p
 for route in manifest['pages']:
- p=target_file(route);d=html.fromstring(p.read_text());docs[route]=d
+ p=target_file(route);d=html.fromstring(p.read_text(encoding='utf-8'));docs[route]=d
  title=d.xpath('//title/text()');desc=d.xpath('//meta[@name="description"]/@content');canonical=d.xpath('//link[@rel="canonical"]/@href')
  if len(d.xpath('//h1'))!=1:errors.append(f'{route}: must have exactly one h1')
  if len(title)!=1 or title[0]in titles:errors.append(f'{route}: missing or duplicated title')
@@ -36,12 +36,12 @@ for route,d in docs.items():
   if not p.exists():errors.append(f'{route}: missing target {ref}');continue
   if u.fragment:
    dest=docs.get(path)
-   if dest is None and p.suffix=='.html':dest=html.fromstring(p.read_text())
+   if dest is None and p.suffix=='.html':dest=html.fromstring(p.read_text(encoding='utf-8'))
    if dest is not None and not dest.xpath('//*[@id=$id]',id=u.fragment):errors.append(f'{route}: missing anchor {ref}')
 sm=etree.fromstring((OUT/'sitemap.xml').read_bytes());urls=sm.xpath('//*[local-name()="loc"]/text()')
 if set(urls)!={base+x for x in manifest['pages']}:errors.append('Sitemap differs from published canonical pages')
-if 'Disallow: /'in(OUT/'robots.txt').read_text():errors.append('robots.txt blocks indexing')
-notfound=html.fromstring((OUT/'404.html').read_text());assert notfound.xpath('//meta[@name="robots" and contains(@content,"noindex")]')
-assert 'google-site-verification'in(OUT/'index.html').read_text()
+if 'Disallow: /'in(OUT/'robots.txt').read_text(encoding='utf-8'):errors.append('robots.txt blocks indexing')
+notfound=html.fromstring((OUT/'404.html').read_text(encoding='utf-8'));assert notfound.xpath('//meta[@name="robots" and contains(@content,"noindex")]')
+assert 'google-site-verification'in(OUT/'index.html').read_text(encoding='utf-8')
 if errors:raise SystemExit('\n'.join(errors))
 print(f'{len(docs)} pages passed: unique title/description/H1, canonical, JSON-LD, links/assets/anchors, sitemap, robots, image dimensions and 404 noindex.')

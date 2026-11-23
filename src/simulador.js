@@ -34,8 +34,8 @@
   function hintFor(cents, type) {
     if (type === 'other') return '';
     const i = tierIndex(cents);
-    if (i === TIERS.length - 1) return 'Você já está na menor taxa.';
-    return 'Com mais ' + money(TIERS[i].max + 1 - cents) + ' nos cartões, a taxa cai para ' + TIERS[i + 1].rate + '%.';
+    if (i === TIERS.length - 1) return 'Você já tem a menor taxa.';
+    return 'Com mais ' + money(TIERS[i].max + 1 - cents) + ', a taxa cai para ' + TIERS[i + 1].rate + '%.';
   }
 
   function markTier(rate) {
@@ -53,7 +53,7 @@
     tiers.hidden = type === 'other';
     if (!valid) {
       $('net').textContent = '—';
-      $('fee').textContent = 'Informe um valor maior que zero, por exemplo 1.500,00.';
+      $('fee').textContent = 'Digite um valor, por exemplo 1.500,00.';
       $('hint').textContent = '';
       markTier(0);
       $('sim-link').href = WA;
@@ -61,7 +61,7 @@
     }
     const q = quote(Math.round(value * 100), type);
     $('net').textContent = money(q.net);
-    $('fee').textContent = 'Taxa de ' + q.rate + '%: ' + money(q.fee) + ' sobre ' + money(q.gross) + '.';
+    $('fee').textContent = 'Taxa de ' + q.rate + '%: ' + money(q.fee);
     $('hint').textContent = hintFor(q.gross, type);
     markTier(type === 'other' ? 0 : q.rate);
     const label = type === 'other' ? 'outros benefícios' : 'alimentação/refeição';
@@ -70,6 +70,16 @@
 
   amount.addEventListener('input', calculate);
   radios.forEach(r => r.addEventListener('change', calculate));
+  // Selecionar tudo ao focar: digitar um novo valor substitui o exemplo, sem precisar apagar.
+  amount.addEventListener('focus', () => {
+    amount.select();
+    // No celular o teclado cobre metade da tela: sobe o campo para o resultado continuar visível.
+    if (!matchMedia('(max-width: 720px)').matches) return;
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(() => document.querySelector('.amount-label').scrollIntoView({ block: 'start', behavior: smooth ? 'smooth' : 'auto' }), 250);
+  });
+  // "Concluir" no teclado do celular fecha o teclado e formata o valor.
+  amount.addEventListener('keydown', e => { if (e.key === 'Enter') amount.blur(); });
   amount.addEventListener('blur', () => {
     const v = parseAmount(amount.value);
     if (Number.isFinite(v) && v > 0) amount.value = v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

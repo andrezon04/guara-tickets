@@ -4,7 +4,7 @@
 /* ---------- Tokens ---------- */
 :root {
   --yellow: #ffe052;
-  --pale: #fff4bd;
+  --pale: #fff4bd;  /* fundo suave do topo: o amarelo forte fica só para botões e destaques */
   --ink: #171717;
   --paper: #fffdf5;
   --red: #c33529;
@@ -42,10 +42,10 @@ a, button, input, summary, label { touch-action: manipulation; }
 .wa-icon { flex: none; }
 
 /* ---------- Cabeçalho ---------- */
-header { background: var(--yellow); border-bottom: 1px solid var(--line); }
+header { background: var(--pale); border-bottom: 1px solid var(--line); }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 76px; }
-.wordmark { display: inline-flex; }
-.brand-logo { display: block; width: 190px; height: auto; }
+.wordmark { display: inline-block; padding-block: 13px; font-size: 22px; font-weight: 900; letter-spacing: -0.03em; line-height: 1; text-decoration: none; white-space: nowrap; }
+.nav-wa { display: none; }
 .navlinks { display: flex; align-items: center; gap: 28px; font-size: 15px; font-weight: 700; }
 .navlinks a { text-decoration: none; }
 .navlinks a:not(.btn) { padding: 12px 0; }
@@ -61,16 +61,24 @@ header { background: var(--yellow); border-bottom: 1px solid var(--line); }
 .mobile-menu nav a:hover, .mobile-menu nav a:focus-visible { background: var(--yellow); }
 
 /* ---------- Hero ---------- */
-.hero { background: var(--yellow); }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(340px, 440px); align-items: center; gap: 64px; padding-block: 64px 92px; }
-.lead { margin-top: 22px; max-width: 34em; font-size: 19px; line-height: 1.55; }
+/* O selo "Pago no Pix" passa da borda do tíquete; corta o excesso para não criar rolagem lateral no celular.
+   hidden vem antes como reserva para navegadores sem suporte a clip. */
+.hero { background: var(--pale); overflow-x: hidden; overflow-x: clip; }
+/* Ordem no HTML: texto, tíquete, fatos. No celular fica nessa ordem (simulador logo após o título);
+   no desktop o tíquete ocupa a coluna da direita inteira. */
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(340px, 440px); grid-template-areas: "copy ticket" "facts ticket"; column-gap: 64px; padding-block: 72px 88px; }
+.hero-copy { grid-area: copy; align-self: end; }
+.hero-facts { grid-area: facts; align-self: start; }
+.hero .ticket { grid-area: ticket; align-self: center; }
+/* Grid items default to min-width:auto, so the amount input could push the column wider than the phone. */
+.hero-grid > * { min-width: 0; }
+.lead { margin-top: 18px; font-size: 21px; font-weight: 700; line-height: 1.4; }
 .facts { margin: 26px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; font-size: 16px; font-weight: 700; line-height: 1.4; }
 .facts li { display: grid; grid-template-columns: 10px 1fr; gap: 12px; align-items: baseline; }
 .facts li::before { content: ""; width: 10px; height: 10px; background: var(--ink); border-radius: 2px; transform: translateY(-1px) rotate(45deg); }
-.text-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 18px; font-weight: 700; text-underline-offset: 4px; }
 
 /* ---------- Tíquete do simulador ---------- */
-.ticket { --notch: var(--yellow); position: relative; background: var(--ink); color: #fff; border-radius: 18px; box-shadow: 10px 12px 0 #1717171f; }
+.ticket { --notch: var(--pale); position: relative; background: var(--ink); color: #fff; border-radius: 18px; box-shadow: 10px 12px 0 #1717171f; }
 .ticket :focus-visible { outline-color: var(--yellow); }
 .ticket-body { padding: 28px 28px 24px; }
 .ticket-title { padding-right: 76px; font-size: 26px; letter-spacing: -0.02em; color: var(--yellow); }
@@ -83,7 +91,7 @@ header { background: var(--yellow); border-bottom: 1px solid var(--line); }
 .seg input:checked + span { background: #fff; border-color: #fff; color: var(--ink); }
 .seg input:focus-visible + span { outline: 3px solid var(--yellow); outline-offset: 3px; }
 
-.amount-label { display: block; margin-top: 20px; }
+.amount-label { display: block; margin-top: 20px; scroll-margin-top: 12px; }
 .amount-field { display: flex; align-items: center; gap: 10px; padding: 0 16px; background: #fff; color: var(--ink); border-radius: 8px; border: 3px solid #fff; }
 .amount-field:focus-within { border-color: var(--yellow); }
 .amount-field span { font-size: 18px; font-weight: 700; color: var(--muted); }
@@ -116,11 +124,10 @@ header { background: var(--yellow); border-bottom: 1px solid var(--line); }
 
 /* ---------- Seções ---------- */
 .section { padding-block: 88px; }
-.section-tint { background: var(--pale); }
 .section-rule { border-top: 1px solid var(--line); }
 .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px 40px; flex-wrap: wrap; margin-bottom: 36px; }
 .section-head p { max-width: 26em; color: var(--muted); }
-.section-head a, .more a, .about-links a { font-weight: 700; text-underline-offset: 4px; }
+.section-head a, .more a { font-weight: 700; text-underline-offset: 4px; }
 
 /* Taxas */
 .rate-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; }
@@ -150,7 +157,6 @@ header { background: var(--yellow); border-bottom: 1px solid var(--line); }
 
 /* Dúvidas */
 .faq-wrap { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: 56px; align-items: start; }
-.faq-wrap > div > p { margin-top: 14px; color: var(--muted); }
 details:not(.mobile-menu) { border-bottom: 1px solid var(--line); }
 details:not(.mobile-menu):first-of-type { border-top: 1px solid var(--line); }
 details > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; cursor: pointer; list-style: none; font-size: 17px; font-weight: 700; line-height: 1.35; }
@@ -161,34 +167,23 @@ details > p { padding: 0 0 20px; max-width: 62ch; color: var(--muted); }
 .more { margin-top: 12px; }
 .more a { display: inline-flex; align-items: center; min-height: 44px; }
 
-/* Quem atende e guias */
-.about-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: 56px; align-items: start; }
-.about-intro { margin-top: 16px; color: var(--muted); }
-.about-links { margin-top: 12px; display: grid; }
-.about-links a { display: inline-flex; align-items: center; min-height: 44px; }
-.guide h3 { margin-bottom: 8px; }
-.guide ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
-.guide a { display: block; height: 100%; padding: 16px 0; border-top: 1px solid var(--line); text-decoration: none; }
-.guide b { display: block; font-size: 17px; text-decoration: underline; text-underline-offset: 4px; }
-.guide span { display: block; margin-top: 2px; font-size: 15px; color: var(--muted); }
-.guide a:hover b { text-decoration-thickness: 3px; }
 
 /* Contato */
-.contact { background: var(--yellow); padding-block: 72px; }
+.contact { background: var(--pale); border-top: 1px solid var(--line); padding-block: 72px; }
 .contact-grid { display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
-.contact p { margin-top: 12px; max-width: 30em; }
+.contact p { margin-top: 8px; color: var(--muted); }
 .contact-action { display: grid; gap: 12px; justify-items: end; }
-.phone { font-size: clamp(30px, 3.4vw, 40px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; text-decoration: none; }
+.phone { padding-block: 6px; font-size: clamp(30px, 3.4vw, 40px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.1; text-decoration: none; }
 .phone:hover { text-decoration: underline; text-underline-offset: 6px; }
 
 /* Rodapé */
 footer { background: var(--ink); color: #fff; padding-block: 40px; }
 footer :focus-visible { outline-color: var(--yellow); }
 .footer-grid { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.footer-grid .brand-logo { width: 200px; }
+.footer-grid .wordmark { color: var(--yellow); }
 .footer-grid p { font-size: 15px; line-height: 1.7; color: var(--on-ink-muted); text-align: right; }
-.footer-grid p a { color: #fff; font-weight: 700; text-underline-offset: 3px; }
-.site-links { display: flex; flex-wrap: wrap; gap: 0 24px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #ffffff30; }
+.footer-grid p a { display: inline-block; padding-block: 8px; color: #fff; font-weight: 700; text-underline-offset: 3px; }
+.site-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0 24px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #ffffff30; }
 .site-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; text-underline-offset: 4px; }
 .footer-legal { margin-top: 12px; font-size: 14px; color: var(--on-ink-muted); }
 
@@ -196,10 +191,10 @@ footer :focus-visible { outline-color: var(--yellow); }
 .mobile-contact { display: none; }
 
 /* ---------- Páginas internas ---------- */
-.page-hero { background: var(--yellow); padding-block: 36px 52px; }
+.page-hero { background: var(--pale); padding-block: 36px 52px; }
 .page-hero h1 { max-width: 20em; font-size: clamp(31px, 4vw, 48px); overflow-wrap: break-word; }
-.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-bottom: 22px; font-size: 15px; }
-.breadcrumb a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; text-underline-offset: 4px; }
+.breadcrumb { display: flex; align-items: baseline; gap: 10px; margin-bottom: 22px; font-size: 15px; }
+.breadcrumb a { flex: none; padding-block: 11px; font-weight: 700; text-underline-offset: 4px; }
 .intro { margin-top: 16px; max-width: 36em; font-size: 19px; line-height: 1.55; }
 .page-body { padding-block: 56px 80px; }
 .reading-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 64px; align-items: start; }
@@ -223,7 +218,7 @@ footer :focus-visible { outline-color: var(--yellow); }
 .example-table th, .example-table td { padding: 12px 10px; border-bottom: 1px solid var(--line); font-size: 15px; }
 .example-table th { background: var(--pale); }
 .example-table td:last-child { font-weight: 700; }
-.sim-band { background: var(--yellow); padding-block: 64px 72px; }
+.sim-band { background: var(--pale); padding-block: 64px 72px; overflow-x: hidden; overflow-x: clip; }
 .sim-band .ticket { max-width: 460px; margin-inline: auto; }
 
 /* ---------- Movimento ---------- */
@@ -243,27 +238,42 @@ footer :focus-visible { outline-color: var(--yellow); }
 
 /* ---------- Responsivo ---------- */
 @media (max-width: 980px) {
-  .hero-grid { grid-template-columns: 1fr; gap: 44px; padding-block: 44px 64px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "copy" "ticket" "facts"; row-gap: 40px; padding-block: 44px 64px; }
+  .facts { margin-top: 0; }
   .hero .ticket { max-width: 480px; }
-  .rate-grid, .faq-wrap, .about-grid { grid-template-columns: 1fr; gap: 28px; }
-  .reading-layout { grid-template-columns: 1fr; gap: 40px; }
+  .rate-grid, .faq-wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .reading-layout { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .info-panel { position: static; }
 }
 @media (max-width: 860px) {
   .navlinks { display: none; }
+  .nav { gap: 10px; }
+  .wordmark { margin-right: auto; }
+  .nav-wa { display: grid; place-items: center; width: 46px; height: 46px; background: var(--ink); color: #fff; border-radius: 8px; }
+  .nav-wa .wa-icon { width: 24px; height: 24px; }
   .mobile-menu { display: block; }
 }
 @media (max-width: 720px) {
   body { font-size: 16px; }
-  .nav { min-height: 66px; }
-  .brand-logo { width: 164px; }
-  .section { padding-block: 56px; }
-  .section-head { margin-bottom: 26px; }
-  .hero-grid { padding-block: 32px 52px; gap: 40px; }
-  .lead, .intro { font-size: 17px; }
-  .steps, .guide ul { grid-template-columns: 1fr; }
-  .steps { gap: 28px; }
-  .steps li::before { font-size: 44px; margin-bottom: 10px; }
+  h2 { font-size: 27px; }
+  .wordmark { font-size: 20px; }
+  .section { padding-block: 48px; }
+  .section-head { margin-bottom: 20px; gap: 6px; }
+  h1 { font-size: 28px; text-wrap: balance; }
+  .nav { min-height: 60px; }
+  .hero-grid { padding-block: 22px 40px; row-gap: 28px; }
+  .lead { margin-top: 8px; font-size: 18px; }
+  .seg { margin-top: 14px; }
+  /* As opções já dizem o que é; o rótulo fica só para leitores de tela */
+  .seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .amount-label { margin-top: 16px; }
+  .ticket-title { font-size: 23px; }
+  .facts { font-size: 16px; }
+  .intro { font-size: 17px; }
+  .steps { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .steps li { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 12px; padding-block: 16px; border-top-width: 1px; }
+  .steps li::before { grid-row: span 2; margin: 0; font-size: 36px; }
+  .steps p { margin-top: 2px; }
   .ticket-body { padding: 24px 20px 20px; }
   .ticket-stub { padding: 20px 20px 24px; }
   .ticket-perf { margin: 0 20px; }
@@ -276,13 +286,23 @@ footer :focus-visible { outline-color: var(--yellow); }
   .rate-table th { padding: 10px 20px; }
   .rate-table td { padding: 14px 20px; }
   .rate-table td:last-child { font-size: 26px; }
-  .brands li { width: 68px; }
-  .contact { padding-block: 56px; }
+  .brands li { width: 64px; height: 40px; }
+  /* Cartões laterais: taxa no canto, logos ocupam a largura toda */
+  .rate-side .rate-card { display: block; position: relative; }
+  .rate-side .rate-card h3 { padding-right: 96px; }
+  .rate-side .rate-big { position: absolute; top: 18px; right: 20px; font-size: 38px; }
+  .contact { padding-block: 44px; }
+  .contact-grid { gap: 20px; }
   .contact-action { justify-items: start; width: 100%; }
   .contact-action .btn { width: 100%; }
+  .footer-grid { gap: 12px; }
   .footer-grid p { text-align: left; }
+  .site-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site-links a { font-size: 14px; }
   footer { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
-  .page-hero { padding-block: 20px 36px; }
+  .page-hero { padding-block: 12px 32px; }
+  .page-hero h1 { font-size: 27px; text-wrap: balance; }
+  .breadcrumb { margin-bottom: 10px; }
   .page-body { padding-block: 40px 56px; }
   .sim-band { padding-block: 48px 56px; }
   .mobile-contact { display: flex; position: fixed; z-index: 20; left: 16px; right: 16px; bottom: calc(12px + env(safe-area-inset-bottom)); justify-content: space-between; min-height: 54px; border-color: var(--yellow); box-shadow: 0 4px 16px #0005; transition: transform 0.25s, visibility 0.25s; }
@@ -294,7 +314,18 @@ footer :focus-visible { outline-color: var(--yellow); }
 }
 @media (max-width: 380px) {
   .wrap { width: calc(100% - 28px); }
+  h1 { font-size: 26px; }
+  .wordmark { font-size: 18px; }
+  .ticket-body { padding-inline: 16px; }
+  .ticket-stub { padding-inline: 16px; }
+  .ticket-perf { margin-inline: 16px; }
+  .ticket-perf::before { left: -29px; }
+  .ticket-perf::after { right: -29px; }
+  .result-value { font-size: 36px; }
   .seg span { font-size: 13px; }
-  .tiers span { font-size: 12px; }
+  .tiers li { padding-inline: 8px; }
+  .brands { gap: 6px; }
+  .brands li { width: 56px; }
+  .rate-table td { font-size: 15px; }
   .amount-field input { font-size: 24px; }
 }

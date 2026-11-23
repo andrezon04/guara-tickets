@@ -35,4 +35,5 @@ Depois de editar qualquer arquivo em `src/` ou `scripts/build-pages.py`, rode `p
 - `src/site.css` é a folha de estilo única; `src/simulador.js` e `src/navegacao.js` são os scripts.
 - `scripts/` reúne o manifesto de páginas, o gerador e o validador.
 - `dist/` contém as páginas e os recursos prontos para servir.
-- `vercel.json` define a barra final nas URLs, o cache dos recursos e os cabeçalhos de segurança.
+- O site é publicado no Cloudflare Workers em [guaratickets.com.br](https://guaratickets.com.br), a partir da pasta `dist/`, a cada push na `main`.
+- `dist/_headers` (gerado pelo build) define o cache dos recursos e os cabeçalhos de segurança.

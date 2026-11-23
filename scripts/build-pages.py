@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'dist'
 # Always write UTF-8 with LF so the build is identical on Windows, macOS and Linux.
 def W(path,text):path.write_text(text,encoding='utf-8',newline='\n')
-BASE='https://guara-tickets.vercel.app'
+BASE='https://guaratickets.com.br'
 HOME=(ROOT/'src/home.html').read_text(encoding='utf-8')
 DATE='2026-11-23'
 SRC=ROOT/'src'
@@ -107,6 +107,35 @@ for path in ['/',*PAGES.keys()]:
  item=ET.SubElement(root,'url');ET.SubElement(item,'loc').text=BASE+path;ET.SubElement(item,'lastmod').text=DATE
 (OUT/'sitemap.xml').write_bytes(ET.tostring(root,encoding='utf-8',xml_declaration=True))
 W(OUT/'robots.txt','User-agent: *\nAllow: /\nSitemap: '+BASE+'/sitemap.xml\n')
+# Cloudflare Workers static assets read security and cache headers from dist/_headers (vercel.json is not used there).
+W(OUT/'_headers','''/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+/assets/site-*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/assets/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/favicon.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/favicon.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/favicon-96.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+''')
 # Minimal navigation data for verification, kept as source, not served as marketing content.
 W(ROOT/'scripts/pages-manifest.json',json.dumps({'origin':BASE,'pages':['/',*PAGES.keys()],'stylesheet':'/assets/'+cssname},ensure_ascii=False,indent=2)+'\n')
 print(f'Built home + {len(PAGES)} focused pages, shared CSS/JS, sitemap and 404.')

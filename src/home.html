@@ -46,18 +46,16 @@
 <label class="amount-label" for="amount">Valor total dos cartões</label>
 <div class="amount-field"><span aria-hidden="true">R$</span><input id="amount" inputmode="decimal" enterkeyhint="done" type="text" value="1.500,00" autocomplete="off" aria-describedby="sim-note"></div>
 <ol class="tiers" id="tiers" aria-label="Faixas de taxa para alimentação e refeição">
-<li data-tier="17"><b>17%</b><span>até 1 mil</span></li>
-<li data-tier="16" class="is-on" aria-current="true"><b>16%</b><span>até 2 mil</span></li>
-<li data-tier="15"><b>15%</b><span>acima</span></li>
+{{faixas}}
 </ol>
 </div>
 <div class="ticket-perf" aria-hidden="true"></div>
 <div class="ticket-stub">
 <div class="result" aria-live="polite" aria-atomic="true">
 <span class="result-label">Você recebe</span>
-<strong class="result-value" id="net">R$ 1.260,00</strong>
-<span class="result-fee" id="fee">Taxa de 16%: R$ 240,00</span>
-<span class="result-hint" id="hint">Com mais R$ 500,01, a taxa cai para 15%.</span>
+<strong class="result-value" id="net">{{recebe}}</strong>
+<span class="result-fee" id="fee">Taxa de {{taxa}}%: {{desconto}}</span>
+<span class="result-hint" id="hint">{{dica}}</span>
 </div>
 <a class="btn btn-yellow" id="sim-link" href="https://wa.me/5511940240988" target="_blank" rel="noopener">Enviar simulação no WhatsApp <svg class="wa-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false" fill="currentColor"><path d="M20.52 3.48A11.91 11.91 0 0 0 12.04 0C5.46 0 .1 5.35.1 11.94c0 2.1.55 4.16 1.6 5.97L0 24l6.25-1.64a11.93 11.93 0 0 0 5.79 1.48h.01C18.63 23.84 24 18.49 24 11.9c0-3.19-1.24-6.18-3.48-8.42ZM12.05 21.8a9.88 9.88 0 0 1-5.04-1.38l-.36-.21-3.71.97.99-3.62-.24-.37a9.87 9.87 0 0 1-1.52-5.25c0-5.47 4.45-9.92 9.93-9.92 2.65 0 5.14 1.04 7.01 2.91A9.83 9.83 0 0 1 22 11.92c0 5.45-4.47 9.88-9.95 9.88Zm5.45-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.59-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.18-1.41-.08-.13-.28-.2-.58-.35Z"/></svg></a>
 <p class="sim-note" id="sim-note">Estimativa com agendamento, sem taxa de motoboy.</p>

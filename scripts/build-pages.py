@@ -24,6 +24,33 @@ def check_taxas(t):
  for taxa in [f['taxa'] for f in faixas]+[t['outros_beneficios'],t['cartao_credito']]:
   if not 0<taxa<100:erro(f'a taxa {taxa} precisa estar entre 0 e 100.')
 check_taxas(TAXAS)
+def brl(cents):
+ """Format centavos as R$ 1.260,00 using integer math only, so floats never round a value."""
+ reais,cent=divmod(cents,100)
+ return 'R$ '+f'{reais:,}'.replace(',','.')+f',{cent:02d}'
+# Tiers as (upper limit in centavos or None, rate), the same shape simulador.js builds.
+FAIXAS=[(None if f['ate_reais'] is None else f['ate_reais']*100,f['taxa']) for f in TAXAS['alimentacao_refeicao']]
+def faixa(cents):return next(i for i,(teto,_) in enumerate(FAIXAS) if teto is None or cents<=teto)
+def curto(teto):return 'acima' if teto is None else 'até '+(f'{teto//100000} mil' if teto%100000==0 else brl(teto))
+def fill(html,values):
+ """Replace each {{name}} in html; stop the build if a marker is missing, repeated or left without a value."""
+ for k,v in values.items():
+  if html.count('{{'+k+'}}')!=1:raise SystemExit(f'src/home.html: o marcador {{{{{k}}}}} deve aparecer exatamente uma vez.')
+  html=html.replace('{{'+k+'}}',v)
+ if left:=re.search(r'\{\{\w+\}\}',html):raise SystemExit(f'src/home.html: o marcador {left[0]} não tem valor no build.')
+ return html
+def sim_values():
+ """What the simulator ticket shows before the JS runs, for the example value already typed in the field."""
+ m=re.search(r'id="amount"[^>]*value="(\d{1,3}(?:\.\d{3})*),(\d{2})"',HOME)
+ if not m:raise SystemExit('src/home.html: o valor de exemplo do simulador deve estar no formato 1.500,00.')
+ cents=int(m[1].replace('.','')+m[2])
+ i=faixa(cents);taxa=FAIXAS[i][1]
+ # Python's round() rounds halves to even; +50 then //100 matches JavaScript's Math.round for positive values.
+ desconto=(cents*taxa+50)//100
+ dica='Você já tem a menor taxa.' if i==len(FAIXAS)-1 else f'Com mais {brl(FAIXAS[i][0]+1-cents)}, a taxa cai para {FAIXAS[i+1][1]}%.'
+ li=lambda j,teto,r:f'<li data-tier="{r}"'+(' class="is-on" aria-current="true"' if j==i else '')+f'><b>{r}%</b><span>{curto(teto)}</span></li>'
+ return {'faixas':'\n'.join(li(j,teto,r) for j,(teto,r) in enumerate(FAIXAS)),'recebe':brl(cents-desconto),'taxa':str(taxa),'desconto':brl(desconto),'dica':dica}
+HOME=fill(HOME,sim_values())
 def minify(text):
  """Small, safe minifier: drops comments and the whitespace around braces and semicolons."""
  text=re.sub(r'/\*.*?\*/','',text,flags=re.S)

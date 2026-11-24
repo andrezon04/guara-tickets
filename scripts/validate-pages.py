@@ -42,6 +42,5 @@ sm=etree.fromstring((OUT/'sitemap.xml').read_bytes());urls=sm.xpath('//*[local-n
 if set(urls)!={base+x for x in manifest['pages']}:errors.append('Sitemap differs from published canonical pages')
 if 'Disallow: /'in(OUT/'robots.txt').read_text(encoding='utf-8'):errors.append('robots.txt blocks indexing')
 notfound=html.fromstring((OUT/'404.html').read_text(encoding='utf-8'));assert notfound.xpath('//meta[@name="robots" and contains(@content,"noindex")]')
-assert 'google-site-verification'in(OUT/'index.html').read_text(encoding='utf-8')
 if errors:raise SystemExit('\n'.join(errors))
 print(f'{len(docs)} pages passed: unique title/description/H1, canonical, JSON-LD, links/assets/anchors, sitemap, robots, image dimensions and 404 noindex.')

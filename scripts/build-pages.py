@@ -12,6 +12,18 @@ BASE='https://guaratickets.com.br'
 HOME=(ROOT/'src/home.html').read_text(encoding='utf-8')
 DATE='2026-11-23'
 SRC=ROOT/'src'
+# Rates live in data/taxas.json so changing a number never means editing code.
+TAXAS=json.loads((ROOT/'data/taxas.json').read_text(encoding='utf-8'))
+def check_taxas(t):
+ """Stop the build with a plain message if the rates file is inconsistent."""
+ def erro(msg):raise SystemExit('data/taxas.json: '+msg)
+ faixas=t['alimentacao_refeicao']
+ limites=[f['ate_reais'] for f in faixas]
+ if limites[-1] is not None or None in limites[:-1]:erro('só a última faixa deve ter "ate_reais": null.')
+ if limites[:-1]!=sorted(set(limites[:-1])):erro('os limites das faixas devem ser crescentes e sem repetição.')
+ for taxa in [f['taxa'] for f in faixas]+[t['outros_beneficios'],t['cartao_credito']]:
+  if not 0<taxa<100:erro(f'a taxa {taxa} precisa estar entre 0 e 100.')
+check_taxas(TAXAS)
 def minify(text):
  """Small, safe minifier: drops comments and the whitespace around braces and semicolons."""
  text=re.sub(r'/\*.*?\*/','',text,flags=re.S)

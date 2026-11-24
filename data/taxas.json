@@ -1,0 +1,9 @@
+{
+  "alimentacao_refeicao": [
+    { "ate_reais": 1000, "taxa": 17 },
+    { "ate_reais": 2000, "taxa": 16 },
+    { "ate_reais": null, "taxa": 15 }
+  ],
+  "outros_beneficios": 15,
+  "cartao_credito": 15
+}

@@ -35,8 +35,12 @@ W(OUT/'assets'/cssname,css)
 # The stylesheet name carries a content hash; drop older builds so dist never ships orphans.
 for old in (OUT/'assets').glob('site-*.css'):
  if old.name!=cssname:old.unlink()
-# Scripts are served as written; simulador.js is the single source of the rate tiers.
-for name in ('simulador.js','navegacao.js'):W(OUT/'assets'/name,(SRC/name).read_text(encoding='utf-8'))
+# Scripts are served as written, except that the __TAXAS__ placeholder in simulador.js becomes data/taxas.json.
+def inject_taxas(js):
+ if js.count('__TAXAS__')!=1:raise SystemExit('src/simulador.js: o marcador __TAXAS__ deve aparecer exatamente uma vez.')
+ return js.replace('__TAXAS__',json.dumps(TAXAS,ensure_ascii=False,separators=(',',':')))
+W(OUT/'assets/simulador.js',inject_taxas((SRC/'simulador.js').read_text(encoding='utf-8')))
+W(OUT/'assets/navegacao.js',(SRC/'navegacao.js').read_text(encoding='utf-8'))
 org=json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>',HOME,re.S)[1])
 org['image']=BASE+'/assets/compartilhamento-guara.png'
 org['description']='Atendimento de VR, vale-alimentação, vale-refeição e cartões de benefícios com Israel, proprietário do Guará Mix, no Jardim Umarizal/Campo Limpo, São Paulo. Região sul, centro e zona oeste da capital.'

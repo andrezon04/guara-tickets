@@ -1,4 +1,4 @@
-// Simulador do tíquete: única fonte das faixas de taxa usadas no site.
+// Simulador do tíquete. As taxas vêm de data/taxas.json, inseridas pelo build.
 (() => {
   const WA = 'https://wa.me/5511940240988';
   const $ = id => document.getElementById(id);
@@ -7,9 +7,12 @@
 
   const radios = [...document.querySelectorAll('input[name="category"]')];
   const tiers = $('tiers');
+  // O build troca o marcador abaixo pelo conteúdo de data/taxas.json. Para mudar uma taxa, edite aquele arquivo.
+  const TAXAS = __TAXAS__;
   // Faixas de alimentação/refeição: limite superior em centavos (inclusive) e taxa em %.
-  const TIERS = [{ max: 100000, rate: 17 }, { max: 200000, rate: 16 }, { max: Infinity, rate: 15 }];
-  const OTHER_RATE = 15;
+  // No JSON o limite está em reais e a última faixa usa null para "sem limite".
+  const TIERS = TAXAS.alimentacao_refeicao.map(f => ({ max: f.ate_reais === null ? Infinity : f.ate_reais * 100, rate: f.taxa }));
+  const OTHER_RATE = TAXAS.outros_beneficios;
 
   const money = cents => (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const category = () => radios.find(r => r.checked).value;
